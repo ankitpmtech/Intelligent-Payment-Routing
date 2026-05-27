@@ -4,6 +4,29 @@ A Technical Product Management case study for a payment orchestration platform t
 
 ---
 
+# Overview
+
+Modern merchants process transactions across multiple payment providers, banks, and geographies. Static payment routing often leads to:
+
+- Lower authorization rates
+- Higher transaction failures
+- Increased payment processing costs
+- Poor customer experience
+- Revenue loss during provider outages
+
+This project explores how an Intelligent Payment Routing platform can dynamically optimize payment flows using real-time performance signals, retry mechanisms, and adaptive routing strategies.
+
+The focus of this repository is to demonstrate:
+- Product thinking
+- Payment orchestration concepts
+- Platform architecture design
+- Reliability engineering
+- API-driven systems
+- AI optimization opportunities
+- Technical Product Management capabilities
+
+---
+
 # Repository Structure
 
 ```bash
@@ -57,30 +80,33 @@ Global merchants lose significant revenue due to:
 - PSP outages
 - Static routing logic
 - Poor retry mechanisms
-- Limited payment visibility
+- Limited operational visibility
 
-Most existing payment systems use static routing and cannot dynamically adapt to:
+Most payment systems rely on fixed routing rules and cannot dynamically adapt to:
 
 - Geography
 - Issuer behavior
 - PSP degradation
-- Fraud risk
+- Fraud signals
 - Latency spikes
 - Currency optimization
 
-This project proposes an Intelligent Payment Routing platform that dynamically optimizes payment flows using real-time performance signals and adaptive routing strategies.
+As transaction scale increases, payment resiliency and intelligent routing become critical platform capabilities.
 
 ---
 
 # Product Goals
 
+The platform aims to:
+
 - Improve authorization rates by 8–12%
-- Reduce payment processing cost by 10%
+- Reduce payment processing cost
 - Minimize failed transactions
 - Improve payment reliability
-- Reduce transaction latency
+- Reduce latency
 - Enable intelligent failover
-- Provide operational visibility
+- Improve merchant experience
+- Provide real-time operational visibility
 
 ---
 
@@ -88,56 +114,74 @@ This project proposes an Intelligent Payment Routing platform that dynamically o
 
 ## Dynamic Routing
 
-Route transactions using:
+Transactions are routed dynamically using:
 
 - Geography
 - Currency
 - BIN intelligence
-- PSP health
+- PSP health score
 - Latency
-- Cost
-- Risk score
+- Cost optimization
+- Fraud and risk signals
 
 ---
 
 ## Smart Retry Engine
 
-Automatically retry failed transactions through alternate PSPs.
+Failed transactions are automatically retried through alternate PSPs using configurable retry logic.
+
+Key capabilities:
+- Retry orchestration
+- Duplicate protection
+- Intelligent retry timing
+- Retry recovery tracking
 
 ---
 
 ## PSP Health Monitoring
 
-Continuously monitor:
+The platform continuously monitors:
 
-- Approval rate
+- Approval rates
 - Latency
 - Downtime
 - Error spikes
+- Throughput
+- Regional degradation
+
+This enables proactive traffic shifting and failover handling.
 
 ---
 
 ## Cost Optimization
 
-Select cost-efficient routes while preserving success rate.
+The routing engine balances:
+- Approval rate
+- Processing cost
+- Latency
+- Reliability
+
+to optimize overall transaction efficiency.
 
 ---
 
 ## Risk-Aware Routing
 
-Use fraud and risk signals to optimize transaction routing.
+Risk signals and fraud scores can influence routing decisions to reduce fraud exposure and improve authorization outcomes.
 
 ---
 
 ## Real-Time Analytics Dashboard
 
-Track:
+Operational dashboards track:
 
 - Approval rate
 - Retry recovery
 - Revenue recovery
 - PSP performance
 - Failure trends
+- Latency distribution
+- Transaction success by region
 
 ---
 
@@ -157,13 +201,14 @@ PSP Connectors
 Payment Providers
 ```
 
-Supporting systems:
+Supporting systems include:
 
 - Retry Service
 - Fraud Engine
-- Analytics Pipeline
 - Monitoring Layer
 - Event Bus
+- Analytics Pipeline
+- Notification Service
 
 ---
 
@@ -176,6 +221,51 @@ Supporting systems:
 | High-risk transaction | PSP C |
 | PSP outage | Failover PSP |
 | Retry attempt | Alternate provider |
+
+---
+
+# Routing Flow
+
+```mermaid
+graph LR
+
+A(Customer Checkout) --> B(API Gateway)
+B --> C(Payment Orchestrator)
+C --> D(Routing Engine)
+
+D --> E(PSP A)
+D --> F(PSP B)
+D --> G(PSP C)
+
+E --> H(Bank Network)
+F --> H
+G --> H
+
+H --> I(Response Engine)
+I --> J(Webhook Service)
+J --> K(Merchant System)
+```
+
+---
+
+# Retry and Failover Flow
+
+```mermaid
+sequenceDiagram
+
+Merchant->>Orchestrator: Create Payment
+Orchestrator->>PSP A: Process Transaction
+
+alt Success
+PSP A-->>Merchant: Payment Approved
+
+else Failure
+PSP A-->>Orchestrator: Timeout/Error
+Orchestrator->>Retry Engine: Evaluate Retry
+Retry Engine->>PSP B: Retry Transaction
+PSP B-->>Merchant: Payment Approved
+end
+```
 
 ---
 
@@ -195,7 +285,7 @@ POST /route-payment
 }
 ```
 
-### Response
+## Sample Response
 
 ```json
 {
@@ -204,6 +294,18 @@ POST /route-payment
   "risk_score": 0.12
 }
 ```
+
+---
+
+# Product Tradeoffs
+
+| Decision | Benefit | Tradeoff |
+|---|---|---|
+| Multi-PSP routing | Higher success rates | Increased complexity |
+| Retry engine | Revenue recovery | Duplicate handling risk |
+| AI-based routing | Better optimization | Model maintenance |
+| Async webhooks | Scalability | Event consistency challenges |
+| Global failover | High resiliency | Operational overhead |
 
 ---
 
@@ -220,14 +322,34 @@ POST /route-payment
 
 ---
 
+# Observability & Monitoring
+
+Key operational metrics include:
+
+- Gateway uptime
+- Approval success rate
+- Retry recovery rate
+- Webhook latency
+- API response time
+- Failure distribution
+- Transaction traceability
+
+Example monitoring stack:
+- Prometheus
+- Grafana
+- OpenTelemetry
+
+---
+
 # Scalability Considerations
 
+The platform is designed using:
 - Event-driven architecture
 - Stateless routing services
 - Kafka-based streaming
 - Distributed caching
 - Multi-region deployment
-- Horizontal scalability
+- Horizontal scaling
 - Circuit breakers
 - Rate limiting
 
@@ -267,19 +389,19 @@ Predict the highest-success PSP before routing.
 
 ## Predictive Failover
 
-Anticipate PSP degradation before outages occur.
+Detect PSP degradation before outages occur.
 
 ---
 
 ## Smart Retry Timing
 
-Optimize retry intervals dynamically.
+Optimize retry intervals dynamically using historical transaction patterns.
 
 ---
 
 ## Reinforcement Learning Routing
 
-Continuously improve routing decisions using live feedback loops.
+Continuously improve routing decisions using real-time transaction feedback loops.
 
 ---
 
@@ -297,7 +419,7 @@ Continuously improve routing decisions using live feedback loops.
 
 - Limited merchants
 - Observe approval rates
-- Validate failover
+- Validate failover handling
 
 ---
 
@@ -327,7 +449,7 @@ Continuously improve routing decisions using live feedback loops.
 
 ---
 
-# Incident Workflow
+## Incident Workflow
 
 1. Detect issue
 2. Trigger alerts
@@ -363,26 +485,54 @@ Continuously improve routing decisions using live feedback loops.
 
 ---
 
+# Why Payment Orchestration Matters
+
+As payment scale increases, relying on a single payment provider introduces:
+
+- Authorization risk
+- Regional failures
+- Uptime dependency
+- Operational limitations
+- Scalability challenges
+
+Payment orchestration improves:
+- Transaction success rates
+- Resiliency
+- Routing flexibility
+- Global payment expansion
+- Merchant control
+- Revenue recovery
+
+---
+
 # Future Enhancements
 
 - AI-powered routing
-- Adaptive retries
 - Merchant-configurable routing
 - Fraud-aware optimization
 - Cost prediction models
 - Real-time traffic shaping
+- Adaptive retries
+- Self-healing failover systems
+
+---
+
+# Learning Outcomes
+
+This project demonstrates:
+- Payment systems understanding
+- Technical Product Management
+- Platform product thinking
+- API architecture concepts
+- Reliability engineering
+- Operational scalability
+- AI-driven optimization opportunities
 
 ---
 
 # Author
 
-Technical Product Management Portfolio Project
+Ankit Phartiyal
 
-Focused on:
-
-- Fintech
-- Payments Infrastructure
-- Platform Products
-- AI-Driven Optimization
-- Reliability Engineering
-- Payment Orchestration
+Technical Product Manager  
+Fintech | Payments | APIs | Platform Products | AI Product Strategy
