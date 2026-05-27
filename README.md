@@ -500,5 +500,5 @@ This project demonstrates:
 
 Ankit Phartiyal
 
-Technical Product Manager  
+Senior Technical Product Manager  
 Fintech | Payments | APIs | Platform Products | AI Product Strategy
